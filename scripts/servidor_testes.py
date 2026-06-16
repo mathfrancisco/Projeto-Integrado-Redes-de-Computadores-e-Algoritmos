@@ -105,6 +105,18 @@ class Handler(BaseHTTPRequestHandler):
             self.enviar_arquivo(RAIZ / "docs" / "relatorio_visual.html", "text/html; charset=utf-8")
             return
 
+        if url.path == "/relatorio_projeto_integrado.html":
+            self.enviar_arquivo(
+                RAIZ / "docs" / "relatorio_projeto_integrado.html", "text/html; charset=utf-8"
+            )
+            return
+
+        if url.path == "/relatorio_projeto_integrado.pdf":
+            self.enviar_arquivo(
+                RAIZ / "docs" / "relatorio_projeto_integrado.pdf", "application/pdf"
+            )
+            return
+
         if url.path == "/api/rede-local":
             self.enviar_json(executar_comando(["ipconfig", "/all"], timeout=10))
             return

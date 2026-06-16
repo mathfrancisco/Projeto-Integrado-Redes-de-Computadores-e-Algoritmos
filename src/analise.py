@@ -55,6 +55,11 @@ def comparar_topologias(
     origem: str,
     destino: str,
 ) -> Comparacao:
+    """Compara o mesmo trajeto nas duas topologias e mede a melhoria.
+
+    Levanta ValueError se o destino for inalcançável em qualquer uma delas.
+    """
+
     atual_resultado = menor_caminho(atual, origem, destino)
     proposta_resultado = menor_caminho(proposta, origem, destino)
 

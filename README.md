@@ -78,8 +78,59 @@ O relatório carrega automaticamente os arquivos `data/topologia_atual.json` e
 testar Dijkstra, comparação entre topologias, ping, traceroute e dados da rede
 local da máquina.
 
+## Como rodar os testes
+
+Os testes automatizados verificam o algoritmo, a validação das topologias, a
+análise de gargalos e a leitura da saída de `ping`.
+
+```bash
+pip install -r requirements.txt
+python -m pytest
+```
+
+Saída esperada: todos os testes passando (`... passed`). Rode sempre a partir da
+raiz do projeto para que os módulos `src` e `scripts` sejam encontrados.
+
+## Estrutura do projeto
+
+O que é cada arquivo e pasta:
+
+| Caminho | O que é |
+| --- | --- |
+| `main.py` | Linha de comando (CLI). Subcomandos `caminho`, `gargalos` e `comparar`. |
+| `src/grafo.py` | Estrutura de dados do grafo (nós, arestas, latências) e carga/validação do JSON. |
+| `src/dijkstra.py` | Algoritmo de Dijkstra: menor caminho e custo entre dois pontos. |
+| `src/analise.py` | Compara as duas topologias e aponta os nós mais usados (gargalos). |
+| `scripts/medir_rede.py` | Mede latência/perda reais com `ping` e grava em `data/medicoes.csv`. |
+| `scripts/servidor_testes.py` | Servidor local Python que serve o relatório HTML e expõe a API de testes. |
+| `data/topologia_atual.json` | Rede de hoje (sem segmentação) como grafo. |
+| `data/topologia_proposta.json` | Rede nova (VLANs, firewall, link redundante) como grafo. |
+| `data/medicoes.csv` | Histórico das medições de latência/perda. |
+| `tests/` | Testes automatizados (pytest) de cada módulo. |
+| `docs/` | Relatórios HTML/PDF, diagramas `.mmd` e guias. |
+
+## Conceitos-chave
+
+Explicação rápida do que cada termo significa neste projeto:
+
+* **Grafo** — modelo da rede: um conjunto de pontos ligados por linhas.
+* **Nó (vértice)** — um dispositivo da rede (PC, servidor, switch, roteador...).
+* **Aresta** — uma conexão entre dois dispositivos.
+* **Peso / latência** — o "custo" de uma conexão, em milissegundos (ms). Quanto
+  menor, mais rápida.
+* **Dijkstra** — algoritmo que encontra o caminho de menor latência somada entre
+  uma origem e um destino. Exige pesos não negativos.
+* **Gargalo / ponto único de falha** — nó por onde passam muitos caminhos; se ele
+  cair, grande parte da rede para. O subcomando `gargalos` ajuda a identificá-los.
+* **VLAN** — rede virtual que separa setores (ex.: Administração, IoT, Visitantes)
+  em faixas de IP próprias, melhorando segurança e organização.
+* **Redundância de link** — segundo caminho de saída (ISP2) que assume se o
+  principal (ISP1) falhar.
+
 ## Documentação
 
+* [Arquitetura do projeto](docs/ARQUITETURA.md)
+* [Relatório do Projeto Integrado (HTML)](docs/relatorio_projeto_integrado.html)
 * [Relatório visual em HTML](docs/relatorio_visual.html)
 * [Guia de testes pelo HTML](docs/guia_testes_html.md)
 * [Topologia atual](docs/topologia_atual.mmd)

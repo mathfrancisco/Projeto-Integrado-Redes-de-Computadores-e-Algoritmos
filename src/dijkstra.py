@@ -59,6 +59,11 @@ def reconstruir_caminho(
     origem: str,
     destino: str,
 ) -> tuple[str, ...]:
+    """Reconstrói a rota origem→destino seguindo o mapa de predecessores.
+
+    Devolve tupla vazia se não houver caminho (destino inalcançável).
+    """
+
     if origem == destino:
         return (origem,)
 
@@ -82,6 +87,8 @@ def menor_caminho(
     origem: str,
     destino: str,
 ) -> ResultadoCaminho:
+    """Roda Dijkstra e devolve o menor caminho e custo entre origem e destino."""
+
     if not grafo.contem_no(destino):
         raise KeyError(f"Destino inexistente: {destino}")
 

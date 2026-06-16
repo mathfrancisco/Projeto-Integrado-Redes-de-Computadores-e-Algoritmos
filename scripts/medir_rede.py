@@ -1,3 +1,10 @@
+"""Mede latência e perda de pacotes com ping e grava o resultado em CSV.
+
+O script roda o ``ping`` do sistema operacional, interpreta a saída (Windows ou
+Linux) e extrai pacotes enviados/recebidos, perda (%) e latências min/média/máx.
+Cada execução vira uma linha em ``data/medicoes.csv``.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -29,20 +36,59 @@ class Medicao:
 CAMPOS = list(Medicao.__dataclass_fields__.keys())
 
 
+def _nova_medicao(
+    *,
+    nome: str,
+    host: str,
+    origem: str,
+    destino: str,
+    status: str,
+    **valores: object,
+) -> Medicao:
+    """Cria uma ``Medicao`` com todos os campos numéricos em None por padrão.
+
+    Evita repetir o preenchimento manual de None em cada caminho de erro.
+    """
+
+    base: dict[str, object] = dict(
+        data_hora=datetime.now().isoformat(timespec="seconds"),
+        nome=nome,
+        host=host,
+        origem=origem,
+        destino=destino,
+        pacotes_enviados=None,
+        pacotes_recebidos=None,
+        perda_percentual=None,
+        latencia_min_ms=None,
+        latencia_media_ms=None,
+        latencia_max_ms=None,
+        status=status,
+    )
+    base.update(valores)
+    return Medicao(**base)  # type: ignore[arg-type]
+
+
 def converter_numero(valor: str) -> float:
+    """Converte '12,5' ou '12.5' em float, aceitando vírgula decimal."""
+
     return float(valor.replace(",", "."))
 
 
 def interpretar_windows(
     saida: str,
 ) -> tuple[int | None, int | None, float | None, float | None, float | None, float | None]:
+    """Extrai (enviados, recebidos, perda, min, médio, máx) do ping do Windows.
+
+    Aceita saída em inglês e português. Campos não encontrados voltam como None.
+    """
+
     enviados = recebidos = None
     perda = minimo = medio = maximo = None
 
     resumo = re.search(
         r"(?:Sent|Enviados)\s*=\s*(\d+).*?"
         r"(?:Received|Recebidos)\s*=\s*(\d+).*?"
-        r"\((\d+(?:[.,]\d+)?)%\s*(?:loss|de perda)\)",
+        r"\((\d+(?:[.,]\d+)?)%\s*(?:loss|de\s+perda)\)",
         saida,
         re.IGNORECASE | re.DOTALL,
     )
@@ -71,6 +117,11 @@ def interpretar_windows(
 def interpretar_linux(
     saida: str,
 ) -> tuple[int | None, int | None, float | None, float | None, float | None, float | None]:
+    """Extrai (enviados, recebidos, perda, min, médio, máx) do ping do Linux/macOS.
+
+    Lê a linha 'packets transmitted' e a linha 'rtt min/avg/max'. None se ausente.
+    """
+
     enviados = recebidos = None
     perda = minimo = medio = maximo = None
 
@@ -104,6 +155,28 @@ def interpretar_linux(
     return enviados, recebidos, perda, minimo, medio, maximo
 
 
+def _decodificar(dados: bytes) -> str:
+    """Decodifica a saída do ping respeitando o codepage do console.
+
+    No Windows o ping usa o codepage OEM (ex.: cp850 em PT-BR), não UTF-8;
+    decodificar como UTF-8 corromperia acentos e quebraria os regex.
+    """
+
+    if not dados:
+        return ""
+
+    if platform.system().lower() == "windows":
+        try:
+            import ctypes
+
+            codepage = f"cp{ctypes.windll.kernel32.GetOEMCP()}"  # type: ignore[attr-defined]
+            return dados.decode(codepage, errors="replace")
+        except Exception:
+            return dados.decode("latin-1", errors="replace")
+
+    return dados.decode("utf-8", errors="replace")
+
+
 def executar_ping(host: str, pacotes: int) -> tuple[int, str]:
     sistema = platform.system().lower()
 
@@ -115,14 +188,12 @@ def executar_ping(host: str, pacotes: int) -> tuple[int, str]:
     processo = subprocess.run(
         comando,
         capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
         timeout=max(30, pacotes * 3),
         check=False,
     )
 
-    return processo.returncode, f"{processo.stdout}\n{processo.stderr}"
+    saida = f"{_decodificar(processo.stdout)}\n{_decodificar(processo.stderr)}"
+    return processo.returncode, saida
 
 
 def medir(
@@ -133,38 +204,14 @@ def medir(
     destino: str,
     pacotes: int,
 ) -> Medicao:
+    dados = dict(nome=nome, host=host, origem=origem, destino=destino)
+
     try:
         retorno, saida = executar_ping(host, pacotes)
     except FileNotFoundError:
-        return Medicao(
-            data_hora=datetime.now().isoformat(timespec="seconds"),
-            nome=nome,
-            host=host,
-            origem=origem,
-            destino=destino,
-            pacotes_enviados=None,
-            pacotes_recebidos=None,
-            perda_percentual=None,
-            latencia_min_ms=None,
-            latencia_media_ms=None,
-            latencia_max_ms=None,
-            status="PING_NAO_ENCONTRADO",
-        )
+        return _nova_medicao(**dados, status="PING_NAO_ENCONTRADO")
     except subprocess.TimeoutExpired:
-        return Medicao(
-            data_hora=datetime.now().isoformat(timespec="seconds"),
-            nome=nome,
-            host=host,
-            origem=origem,
-            destino=destino,
-            pacotes_enviados=pacotes,
-            pacotes_recebidos=None,
-            perda_percentual=None,
-            latencia_min_ms=None,
-            latencia_media_ms=None,
-            latencia_max_ms=None,
-            status="TIMEOUT",
-        )
+        return _nova_medicao(**dados, status="TIMEOUT", pacotes_enviados=pacotes)
 
     if platform.system().lower() == "windows":
         valores = interpretar_windows(saida)
@@ -174,19 +221,15 @@ def medir(
     enviados, recebidos, perda, minimo, medio, maximo = valores
     interpretado = enviados is not None and recebidos is not None
 
-    return Medicao(
-        data_hora=datetime.now().isoformat(timespec="seconds"),
-        nome=nome,
-        host=host,
-        origem=origem,
-        destino=destino,
+    return _nova_medicao(
+        **dados,
+        status="OK" if retorno == 0 and interpretado else "REVISAR",
         pacotes_enviados=enviados,
         pacotes_recebidos=recebidos,
         perda_percentual=perda,
         latencia_min_ms=minimo,
         latencia_media_ms=medio,
         latencia_max_ms=maximo,
-        status="OK" if retorno == 0 and interpretado else "REVISAR",
     )
 
 
