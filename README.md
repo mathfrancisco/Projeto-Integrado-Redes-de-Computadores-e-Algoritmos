@@ -13,7 +13,9 @@ A rede será representada como um grafo:
 * a latência será o peso das arestas;
 * o algoritmo de Dijkstra será usado para encontrar caminhos de menor latência.
 
-A solução proposta será validada no **Cisco Packet Tracer**.
+A solução proposta será validada pelo **relatório visual em HTML**, executado por
+um servidor local Python. A página permite testar o algoritmo de Dijkstra,
+comparar topologias e executar testes de conectividade da máquina.
 
 ## Etapas
 
@@ -23,8 +25,8 @@ A solução proposta será validada no **Cisco Packet Tracer**.
 4. Modelar a rede como grafo.
 5. Executar o algoritmo de Dijkstra.
 6. Identificar gargalos e pontos críticos.
-7. Criar uma nova arquitetura com VLANs, ACLs, firewall e VPN.
-8. Simular e testar a proposta no Cisco Packet Tracer.
+7. Criar uma nova arquitetura com VLANs, regras de acesso, firewall e VPN.
+8. Testar a proposta pelo relatório HTML interativo.
 9. Comparar a rede atual com a rede proposta.
 
 ## Arquitetura proposta
@@ -48,19 +50,43 @@ flowchart LR
     D --> E[Algoritmo de Dijkstra]
     E --> F[Identificação de caminhos e pontos críticos]
     F --> G[Projeto da nova arquitetura]
-    G --> H[Simulação no Packet Tracer]
-    H --> I[Testes de conectividade e segurança]
+    G --> H[Relatório HTML interativo]
+    H --> I[Testes de algoritmo e conectividade]
     I --> J[Comparação e conclusão]
 ```
 
+## Como testar
+
+Para usar o relatório visual dinâmico com botões de teste, execute:
+
+```bash
+python scripts/servidor_testes.py
+```
+
+Depois abra `http://127.0.0.1:8000` no navegador.
+
+Se a porta `8000` ja estiver ocupada, use outra porta:
+
+```bash
+python scripts/servidor_testes.py 8001
+```
+
+Depois abra `http://127.0.0.1:8001`.
+
+O relatório carrega automaticamente os arquivos `data/topologia_atual.json` e
+`data/topologia_proposta.json`, preenche as opções de origem/destino e permite
+testar Dijkstra, comparação entre topologias, ping, traceroute e dados da rede
+local da máquina.
+
 ## Documentação
 
-* [Planejamento](docs/PLANEJAMENTO.md)
-* [Metodologia](docs/METODOLOGIA.md)
-* [Pseudocódigo](docs/PSEUDOCODIGO.md)
-* [Plano de endereçamento](docs/PLANO_ENDERECAMENTO.md)
-* [Regras de firewall](docs/REGRAS_FIREWALL.md)
-* [Diagramas Mermaid](docs/diagramas)
+* [Relatório visual em HTML](docs/relatorio_visual.html)
+* [Guia de testes pelo HTML](docs/guia_testes_html.md)
+* [Topologia atual](docs/topologia_atual.mmd)
+* [Topologia proposta](docs/topologia_proposta.mmd)
+* [Funcionamento da rede proposta](docs/funcionamento_rede_proposta.mmd)
+* [Fluxograma do Dijkstra](docs/fluxograma_dijkstra.mmd)
+* [Visão geral do projeto](docs/visao_geral_projeto.mmd)
 
 ## ODS
 

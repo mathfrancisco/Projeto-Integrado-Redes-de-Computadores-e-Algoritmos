@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnostico e Melhoria da Rede Corporativa</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1b2430;
+      --muted: #5d6b7a;
+      --line: #c8d0da;
+      --blue: #1f6feb;
+      --green: #16833a;
+      --red: #c6372f;
+      --amber: #9a6700;
+      --border: #d9e0e8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    header {
+      background: #101820;
+      color: #fff;
+      padding: 28px 32px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+
+    header p {
+      margin: 0;
+      color: #d8e1ec;
+      max-width: 980px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto 48px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+
+    .edge {
+      stroke: var(--line);
+      stroke-width: 3;
+    }
+
+    .edge.good {
+      stroke: var(--green);
+      stroke-width: 4;
+    }
+
+    .node circle,
+    .node rect {
+      stroke: #243447;
+      stroke-width: 2;
+      fill: #ffffff;
+    }
+
+    .node.router circle {
+      fill: #e8f1ff;
+    }
+
+    .node.switch rect {
+      fill: #eef8f0;
+    }
+
+    .node.server rect {
+      fill: #fff4df;
+    }
+
+    .node.client circle {
+      fill: #f3f0ff;
+    }
+
+    .node.external circle {
+      fill: #ffeceb;
+    }
+
+    .node text {
+      font-size: 13px;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      fill: var(--text);
+    }
+
+    .edge-label {
+      font-size: 12px;
+      fill: var(--muted);
+      text-anchor: middle;
+      paint-order: stroke;
+      stroke: #fbfcfe;
+      stroke-width: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .ok {
+      color: var(--green);
+      background: #eaf7ee;
+    }
+
+    .block {
+      color: var(--red);
+      background: #fdecea;
+    }
+
+    .warn {
+      color: var(--amber);
+      background: #fff7df;
+    }
+
+    .path {
+      font-family: Consolas, monospace;
+      background: #eef2f7;
+      padding: 10px 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .note {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      margin: -6px 0 16px;
+      max-width: 920px;
+    }
+
+    .details {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .details li {
+      margin: 5px 0;
+    }
+
+    .graph-wrap {
+      min-height: 360px;
+    }
+
+    .graph-meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 8px 0 0;
+    }
+
+    .path-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: end;
+      margin: 12px 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    button {
+      border: 1px solid #1f6feb;
+      background: #1f6feb;
+      color: #fff;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      color: #1f6feb;
+      background: #fff;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .7;
+    }
+
+    input,
+    select {
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      background: #fff;
+    }
+
+    pre.output {
+      min-height: 120px;
+      max-height: 360px;
+      overflow: auto;
+      margin: 12px 0 0;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #101820;
+      color: #edf4fb;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .test-panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+
+    .test-panel p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .quick-hosts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-hosts button {
+      border-color: var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 7px 9px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 880px) {
+      .grid,
+      .kpis,
+      .test-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding: 22px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Diagnostico e Melhoria da Rede Corporativa</h1>
+    <p>Visualizacao simples para apresentar a rede atual, a rede proposta, o resultado do Dijkstra e os testes executados pelo servidor local Python.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Resumo</h2>
+      <p class="section-intro">Esta parte mostra os indicadores principais do projeto. Os valores sao calculados a partir das topologias carregadas pelo servidor Python e servem para explicar, em poucos numeros, o ganho da proposta.</p>
+      <div id="resumo-kpis" class="kpis"></div>
+      <ul class="details">
+        <li><strong>Custo atual:</strong> soma das latencias do menor caminho na rede sem melhorias.</li>
+        <li><strong>Custo proposto:</strong> soma das latencias do menor caminho na nova arquitetura.</li>
+        <li><strong>Melhoria:</strong> reducao percentual entre o custo atual e o custo proposto.</li>
+        <li><strong>VLANs:</strong> quantidade de segmentos logicos planejados para separar setores e reduzir riscos.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Caminho de menor latencia</h2>
+      <p class="section-intro">Aqui aparece o resultado do algoritmo de Dijkstra. Ele recebe origem, destino e pesos das conexoes em milissegundos, entao encontra o caminho com menor latencia acumulada.</p>
+      <div id="caminhos" class="grid"></div>
+    </section>
+
+    <section>
+      <h2>Topologias</h2>
+      <p class="section-intro">Cada desenho abaixo e gerado a partir dos arquivos JSON da pasta <strong>data</strong>. Os circulos e retangulos representam dispositivos; as linhas representam conexoes; os rotulos nas linhas mostram a latencia usada pelo algoritmo.</p>
+      <div class="grid">
+        <div>
+          <h3>Rede atual</h3>
+          <div id="grafo-atual" class="graph-wrap"></div>
+          <p id="meta-atual" class="graph-meta"></p>
+        </div>
+
+        <div>
+          <h3>Rede proposta</h3>
+          <div id="grafo-proposta" class="graph-wrap"></div>
+          <p id="meta-proposta" class="graph-meta"></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>VLANs propostas</h2>
+      <p class="section-intro">As VLANs separam a rede por finalidade. Isso melhora organizacao, seguranca e controle de acesso, porque cada setor fica em uma faixa de IP propria e pode receber regras especificas.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>VLAN</th>
+            <th>Setor</th>
+            <th>Rede</th>
+            <th>Gateway</th>
+          </tr>
+        </thead>
+        <tbody id="vlan-linhas"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Matriz de testes</h2>
+      <p class="section-intro">Esta matriz define o que deve funcionar e o que deve ser bloqueado. Ela pode ser usada como roteiro de validacao na apresentacao e nos testes interativos do proprio HTML.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Origem</th>
+            <th>Destino</th>
+            <th>Resultado esperado</th>
+          </tr>
+        </thead>
+        <tbody id="matriz-linhas"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Testes interativos</h2>
+      <p class="section-intro">Esta area permite demonstrar o projeto ao vivo. O navegador chama o servidor local Python, e o servidor executa o algoritmo ou comandos de rede da sua maquina.</p>
+
+      <div class="test-grid">
+        <div class="test-panel">
+          <h3>1. Algoritmo Dijkstra</h3>
+          <p>Escolha uma topologia, uma origem e um destino. O resultado mostra o menor caminho e a latencia total.</p>
+          <div class="controls">
+            <div class="field">
+              <label for="topologia">Topologia</label>
+              <select id="topologia">
+                <option value="proposta">Proposta</option>
+                <option value="atual">Atual</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="origem">Origem</label>
+              <select id="origem" aria-label="Origem"></select>
+            </div>
+            <div class="field">
+              <label for="destino">Destino</label>
+              <select id="destino" aria-label="Destino"></select>
+            </div>
+          </div>
+          <button type="button" data-action="dijkstra">Executar Dijkstra</button>
+        </div>
+
+        <div class="test-panel">
+          <h3>2. Comparacao</h3>
+          <p>Executa a comparacao padrao DEV1 -> CLOUD nas duas redes e apresenta o ganho estimado da proposta.</p>
+          <button type="button" data-action="comparar">Comparar topologias</button>
+        </div>
+
+        <div class="test-panel">
+          <h3>3. Rede da maquina</h3>
+          <p>Executa comandos reais no seu computador. Use "Ver minha rede" para descobrir o gateway e depois teste com ping.</p>
+          <div class="field">
+            <label for="host">Host ou IP</label>
+            <input id="host" value="8.8.8.8" aria-label="Host para ping ou traceroute">
+          </div>
+          <div class="quick-hosts">
+            <button type="button" data-host="8.8.8.8">DNS Google</button>
+            <button type="button" data-host="1.1.1.1">DNS Cloudflare</button>
+            <button type="button" data-host="google.com">Google</button>
+          </div>
+          <div class="controls">
+            <button type="button" data-action="ping">Ping</button>
+            <button type="button" class="secondary" data-action="traceroute">Tracert</button>
+            <button type="button" class="secondary" data-action="ipconfig">Ver minha rede</button>
+          </div>
+        </div>
+      </div>
+
+      <h3>Resultado</h3>
+      <pre id="saida-testes" class="output">Clique em um teste para ver o resultado aqui.</pre>
+    </section>
+  </main>
+
+  <script>
+    const saida = document.querySelector("#saida-testes");
+    const vlans = [
+      { id: 10, setor: "Administracao", rede: "192.168.10.0/24", gateway: "192.168.10.1" },
+      { id: 20, setor: "Desenvolvimento", rede: "192.168.20.0/24", gateway: "192.168.20.1" },
+      { id: 30, setor: "Servidores", rede: "192.168.30.0/24", gateway: "192.168.30.1" },
+      { id: 40, setor: "IoT", rede: "192.168.40.0/24", gateway: "192.168.40.1" },
+      { id: 50, setor: "Visitantes", rede: "192.168.50.0/24", gateway: "192.168.50.1" },
+      { id: 99, setor: "Gerenciamento", rede: "192.168.99.0/24", gateway: "192.168.99.1" }
+    ];
+    const matrizTestes = [
+      ["T01", "PC_ADMIN", "SRV_APP", "Permitido", "Admin deve acessar os servidores internos."],
+      ["T02", "PC_DEV", "SRV_APP", "Permitido", "Desenvolvimento deve acessar servicos de aplicacao."],
+      ["T03", "PC_DEV", "PC_ADMIN", "Bloqueado", "Desenvolvimento nao deve acessar maquinas administrativas."],
+      ["T04", "IOT1", "SRV_MQTT", "Permitido", "Dispositivos IoT devem conversar com o servidor MQTT."],
+      ["T05", "IOT1", "PC_ADMIN", "Bloqueado", "IoT nao deve acessar a rede administrativa."],
+      ["T06", "PC_GUEST", "SRV_APP", "Bloqueado", "Visitantes nao devem acessar servidores internos."],
+      ["T07", "PC_GUEST", "CLOUD_SERVER", "Permitido", "Visitantes podem acessar servicos externos."],
+      ["T08", "PC_DEV", "CLOUD_SERVER", "Permitido", "Desenvolvimento pode acessar a internet simulada."],
+      ["T09", "PC_ADMIN", "SW_CORE", "Permitido", "Administracao pode acessar gerenciamento."],
+      ["T10", "Todos", "Gateway da VLAN", "Permitido", "Cada dispositivo deve alcancar seu proprio gateway."]
+    ];
+    let dadosTopologias = null;
+
+    function escrever(texto) {
+      saida.textContent = texto;
+    }
+
+    function formatarJson(dados) {
+      return JSON.stringify(dados, null, 2);
+    }
+
+    function formatoMs(valor) {
+      return Number(valor).toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + " ms";
+    }
+
+    function tipoClasse(tipo) {
+      const texto = String(tipo || "").toLowerCase();
+      if (texto.includes("switch")) return "switch";
+      if (texto.includes("servidor")) return "server";
+      if (texto.includes("roteador") || texto.includes("firewall") || texto.includes("access")) return "router";
+      if (texto.includes("internet") || texto.includes("nuvem") || texto.includes("isp") || texto.includes("link")) return "external";
+      return "client";
+    }
+
+    function textoCurto(id) {
+      return String(id).replace("GUEST1", "GUEST").replace("SW_CORE", "CORE").slice(0, 8);
+    }
+
+    function posicoesCirculares(topologia) {
+      const largura = 520;
+      const altura = 360;
+      const centroX = largura / 2;
+      const centroY = altura / 2;
+      const raioX = 190;
+      const raioY = 125;
+      const posicoes = {};
+      const nos = topologia.nos || [];
+
+      nos.forEach((no, indice) => {
+        const angulo = (-Math.PI / 2) + (2 * Math.PI * indice / Math.max(nos.length, 1));
+        posicoes[no.id] = {
+          x: Math.round(centroX + Math.cos(angulo) * raioX),
+          y: Math.round(centroY + Math.sin(angulo) * raioY)
+        };
+      });
+
+      return posicoes;
+    }
+
+    function caminhoComoChaves(caminho) {
+      const chaves = new Set();
+      for (let i = 0; i < caminho.length - 1; i += 1) {
+        chaves.add(`${caminho[i]}|${caminho[i + 1]}`);
+        chaves.add(`${caminho[i + 1]}|${caminho[i]}`);
+      }
+      return chaves;
+    }
+
+    function desenharGrafo(alvo, topologia, caminho = []) {
+      const posicoes = posicoesCirculares(topologia);
+      const arestasCaminho = caminhoComoChaves(caminho);
+      let svg = '<svg viewBox="0 0 520 360" role="img" aria-label="' + topologia.nome + '">';
+
+      (topologia.arestas || []).forEach((aresta) => {
+        const origem = posicoes[aresta.origem];
+        const destino = posicoes[aresta.destino];
+        if (!origem || !destino) return;
+        const destaque = arestasCaminho.has(`${aresta.origem}|${aresta.destino}`) ? " good" : "";
+        const labelX = Math.round((origem.x + destino.x) / 2);
+        const labelY = Math.round((origem.y + destino.y) / 2);
+        svg += `<line class="edge${destaque}" x1="${origem.x}" y1="${origem.y}" x2="${destino.x}" y2="${destino.y}"></line>`;
+        svg += `<text class="edge-label" x="${labelX}" y="${labelY}">${String(aresta.latencia_ms).replace(".", ",")} ms</text>`;
+      });
+
+      (topologia.nos || []).forEach((no) => {
+        const posicao = posicoes[no.id];
+        const classe = tipoClasse(no.tipo);
+        const label = textoCurto(no.id);
+        if (classe === "switch" || classe === "server") {
+          svg += `<g class="node ${classe}"><rect x="${posicao.x - 36}" y="${posicao.y - 26}" width="72" height="52" rx="6"></rect><text x="${posicao.x}" y="${posicao.y}">${label}</text></g>`;
+        } else {
+          svg += `<g class="node ${classe}"><circle cx="${posicao.x}" cy="${posicao.y}" r="30"></circle><text x="${posicao.x}" y="${posicao.y}">${label}</text></g>`;
+        }
+      });
+
+      svg += "</svg>";
+      document.querySelector(alvo).innerHTML = svg;
+    }
+
+    function preencherSelect(select, nos, valorPadrao) {
+      select.innerHTML = "";
+      nos.forEach((no) => {
+        const option = document.createElement("option");
+        option.value = no.id;
+        option.textContent = no.id;
+        if (no.id === valorPadrao) option.selected = true;
+        select.appendChild(option);
+      });
+    }
+
+    function atualizarOpcoesNos() {
+      if (!dadosTopologias) return;
+      const chave = document.querySelector("#topologia").value;
+      const topologia = dadosTopologias[chave];
+      preencherSelect(document.querySelector("#origem"), topologia.nos, "DEV1");
+      preencherSelect(document.querySelector("#destino"), topologia.nos, "CLOUD");
+    }
+
+    function renderizarVlans() {
+      const tbody = document.querySelector("#vlan-linhas");
+      tbody.innerHTML = vlans.map((vlan) => `
+        <tr>
+          <td>${vlan.id}</td>
+          <td>${vlan.setor}</td>
+          <td>${vlan.rede}</td>
+          <td>${vlan.gateway}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderizarMatriz() {
+      const tbody = document.querySelector("#matriz-linhas");
+      tbody.innerHTML = matrizTestes.map(([id, origem, destino, esperado, detalhe]) => {
+        const classe = esperado === "Permitido" ? "ok" : "block";
+        return `
+          <tr>
+            <td>${id}</td>
+            <td>${origem}</td>
+            <td>${destino}</td>
+            <td><span class="tag ${classe}">${esperado}</span><br><span class="note">${detalhe}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderizarResumo(comparacao) {
+      const vlanCount = vlans.length;
+      document.querySelector("#resumo-kpis").innerHTML = `
+        <div class="kpi"><strong>${formatoMs(comparacao.custo_atual_ms)}</strong><span>Custo atual DEV1 -> CLOUD</span></div>
+        <div class="kpi"><strong>${formatoMs(comparacao.custo_proposto_ms)}</strong><span>Custo proposto DEV1 -> CLOUD</span></div>
+        <div class="kpi"><strong>${comparacao.melhoria_percentual.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</strong><span>Melhoria estimada</span></div>
+        <div class="kpi"><strong>${vlanCount}</strong><span>VLANs propostas</span></div>
+      `;
+
+      document.querySelector("#caminhos").innerHTML = `
+        <div class="path-list">
+          <h3>Topologia atual</h3>
+          <div class="path">${comparacao.caminho_atual.join(" -> ")}</div>
+          <p class="note">Custo total: ${formatoMs(comparacao.custo_atual_ms)}</p>
+        </div>
+        <div class="path-list">
+          <h3>Topologia proposta</h3>
+          <div class="path">${comparacao.caminho_proposto.join(" -> ")}</div>
+          <p class="note">Custo total: ${formatoMs(comparacao.custo_proposto_ms)}</p>
+        </div>
+      `;
+
+      desenharGrafo("#grafo-atual", dadosTopologias.atual, comparacao.caminho_atual);
+      desenharGrafo("#grafo-proposta", dadosTopologias.proposta, comparacao.caminho_proposto);
+      document.querySelector("#meta-atual").textContent = `${dadosTopologias.atual.nos.length} dispositivos, ${dadosTopologias.atual.arestas.length} conexoes.`;
+      document.querySelector("#meta-proposta").textContent = `${dadosTopologias.proposta.nos.length} dispositivos, ${dadosTopologias.proposta.arestas.length} conexoes.`;
+    }
+
+    async function chamarApi(url, opcoes = {}) {
+      try {
+        const resposta = await fetch(url, opcoes);
+        const tipo = resposta.headers.get("content-type") || "";
+        const dados = tipo.includes("application/json") ? await resposta.json() : await resposta.text();
+
+        if (!resposta.ok) {
+          escrever(typeof dados === "string" ? dados : formatarJson(dados));
+          return;
+        }
+
+        if (dados.saida) {
+          escrever(dados.saida);
+          return;
+        }
+
+        escrever(formatarJson(dados));
+      } catch (erro) {
+        escrever(
+          "Nao foi possivel chamar o servidor local.\n\n" +
+          "Execute no terminal, dentro da pasta do projeto:\n" +
+          "python scripts\\servidor_testes.py\n\n" +
+          "Depois abra: http://127.0.0.1:8000\n\n" +
+          "Detalhe: " + erro.message
+        );
+      }
+    }
+
+    async function obterJson(url) {
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+      if (!resposta.ok || dados.ok === false) {
+        throw new Error(dados.erro || "Falha ao carregar dados.");
+      }
+      return dados;
+    }
+
+    async function carregarTela() {
+      try {
+        dadosTopologias = await obterJson("/api/topologias");
+        const comparacao = await obterJson("/api/comparar");
+        renderizarVlans();
+        renderizarMatriz();
+        atualizarOpcoesNos();
+        renderizarResumo(comparacao);
+        escrever("Tela carregada. Escolha um teste interativo para executar.");
+      } catch (erro) {
+        renderizarVlans();
+        renderizarMatriz();
+        escrever(
+          "Nao foi possivel carregar dados dinamicos.\n\n" +
+          "Execute o servidor local:\n" +
+          "python scripts/servidor_testes.py\n\n" +
+          "Depois abra http://127.0.0.1:8000\n\n" +
+          "Detalhe: " + erro.message
+        );
+      }
+    }
+
+    async function executar(acao) {
+      escrever("Executando...");
+
+      if (acao === "dijkstra") {
+        const topologia = encodeURIComponent(document.querySelector("#topologia").value);
+        const origem = encodeURIComponent(document.querySelector("#origem").value);
+        const destino = encodeURIComponent(document.querySelector("#destino").value);
+        await chamarApi(`/api/dijkstra?topologia=${topologia}&origem=${origem}&destino=${destino}`);
+        return;
+      }
+
+      if (acao === "comparar") {
+        await chamarApi("/api/comparar");
+        return;
+      }
+
+      if (acao === "ipconfig") {
+        await chamarApi("/api/rede-local");
+        return;
+      }
+
+      const host = document.querySelector("#host").value;
+      const corpo = JSON.stringify({ host });
+
+      if (acao === "ping") {
+        await chamarApi("/api/ping", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: corpo
+        });
+        return;
+      }
+
+      if (acao === "traceroute") {
+        await chamarApi("/api/traceroute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: corpo
+        });
+      }
+    }
+
+    document.querySelectorAll("[data-action]").forEach((botao) => {
+      botao.addEventListener("click", async () => {
+        document.querySelectorAll("button").forEach((item) => item.disabled = true);
+        await executar(botao.dataset.action);
+        document.querySelectorAll("button").forEach((item) => item.disabled = false);
+      });
+    });
+
+    document.querySelectorAll("[data-host]").forEach((botao) => {
+      botao.addEventListener("click", () => {
+        document.querySelector("#host").value = botao.dataset.host;
+      });
+    });
+
+    document.querySelector("#topologia").addEventListener("change", atualizarOpcoesNos);
+    carregarTela();
+  </script>
+</body>
+</html>

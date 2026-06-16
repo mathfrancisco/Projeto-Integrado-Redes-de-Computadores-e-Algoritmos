@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.idea/
+servidor_testes.*.log
+docs/fda39d96-d7a3-4064-99cd-b3dc49e208dd.pdf

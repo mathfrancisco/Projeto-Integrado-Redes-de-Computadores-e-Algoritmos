@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projeto Integrado — Diagnóstico e Melhoria da Rede Corporativa | UNIFEOB 2026</title>
+  <style>
+    :root {
+      --azul: #1F4E96;
+      --azul-claro: #2E6DBF;
+      --linha-tabela: #B7C4D6;
+      --cabec-tabela: #2E6DBF;
+      --texto: #1b2430;
+      --cinza: #555f6b;
+      --borda: #c8d0da;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--texto);
+      line-height: 1.5;
+      font-size: 11pt;
+      background: #e9edf2;
+    }
+
+    .pagina {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 12px auto;
+      padding: 22mm 20mm;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,.12);
+      position: relative;
+    }
+
+    .topo {
+      text-align: right;
+      font-size: 8.5pt;
+      color: var(--cinza);
+      border-bottom: 1px solid var(--borda);
+      padding-bottom: 4px;
+      margin-bottom: 22px;
+    }
+
+    /* Capa */
+    .capa-inst {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .capa-inst .uni {
+      color: var(--azul);
+      font-weight: bold;
+      font-size: 13pt;
+      border-bottom: 1px solid var(--borda);
+      padding-bottom: 10px;
+    }
+    .capa-inst .curso {
+      color: var(--cinza);
+      font-size: 10pt;
+      margin-top: 6px;
+    }
+    .capa-titulo {
+      color: var(--azul);
+      text-align: center;
+      font-size: 30pt;
+      font-weight: bold;
+      margin: 70px 0 0;
+      letter-spacing: 1px;
+    }
+    .capa-sub {
+      text-align: center;
+      font-size: 22pt;
+      font-weight: bold;
+      margin: 18px 0 0;
+    }
+    .capa-trim {
+      text-align: center;
+      font-size: 12pt;
+      color: var(--cinza);
+      margin: 4px 0 0;
+    }
+    .capa-tema {
+      text-align: center;
+      font-size: 17pt;
+      font-weight: bold;
+      margin: 55px 0 0;
+    }
+    .capa-meta {
+      text-align: center;
+      font-size: 11pt;
+      margin-top: 70px;
+      line-height: 1.8;
+    }
+    .capa-local {
+      text-align: center;
+      font-size: 10pt;
+      color: var(--cinza);
+      margin-top: 22px;
+    }
+
+    h2.sec {
+      color: var(--azul);
+      font-size: 15pt;
+      border-bottom: 1px solid var(--linha-tabela);
+      padding-bottom: 4px;
+      margin: 26px 0 12px;
+    }
+    h3.sub {
+      color: var(--azul-claro);
+      font-size: 12pt;
+      margin: 18px 0 8px;
+    }
+    p { margin: 0 0 10px; text-align: justify; }
+    a { color: var(--azul-claro); word-break: break-all; }
+
+    ul.especificos { margin: 4px 0 10px; padding-left: 22px; }
+    ul.especificos li { margin: 4px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+      margin: 8px 0 14px;
+    }
+    table.info td {
+      border: 1px solid var(--linha-tabela);
+      padding: 7px 9px;
+      vertical-align: top;
+    }
+    table.info td:first-child {
+      font-weight: bold;
+      width: 32%;
+      background: #f3f6fb;
+    }
+
+    table.dados th {
+      background: var(--cabec-tabela);
+      color: #fff;
+      text-align: left;
+      padding: 7px 9px;
+      font-size: 9.5pt;
+      border: 1px solid var(--cabec-tabela);
+    }
+    table.dados td {
+      border: 1px solid var(--linha-tabela);
+      padding: 6px 9px;
+      vertical-align: top;
+    }
+    table.dados tbody tr:nth-child(even) { background: #f3f6fb; }
+
+    .status-ok {
+      background: #dfeafa;
+      color: var(--azul);
+      font-weight: bold;
+      text-align: center;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 9pt;
+      font-weight: bold;
+    }
+    .tag.perm { color: #16833a; background: #eaf7ee; }
+    .tag.bloq { color: #c6372f; background: #fdecea; }
+
+    code, .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9.5pt;
+    }
+    pre.code {
+      background: #f1f4f8;
+      border: 1px solid var(--borda);
+      border-radius: 5px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9pt;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .pagina { margin: 0; box-shadow: none; width: auto; min-height: auto; padding: 16mm 14mm; }
+      .quebra { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CAPA -->
+<section class="pagina">
+  <div class="topo">MF Tecnologia — Diagnóstico de Rede | UNIFEOB 2026</div>
+
+  <div class="capa-inst">
+    <div class="uni">UNIFEOB — Centro Universitário Octávio Bastos</div>
+    <div class="curso">Escola de Negócios e Tecnologia EAD — Análise e Desenvolvimento de Sistemas</div>
+  </div>
+
+  <div class="capa-titulo">PROJETO INTEGRADO</div>
+  <div class="capa-sub">Redes de Computadores e Algoritmos</div>
+  <div class="capa-trim">1º Trimestre Letivo de 2026</div>
+
+  <div class="capa-tema">Diagnóstico e Melhoria da Rede Corporativa</div>
+
+  <div class="capa-meta">
+    Aluno: Matheus Francisco &nbsp;|&nbsp; RA: 24001882<br>
+    Orientadora: Prof.ª Mariangela Martimbianco Santos
+  </div>
+
+  <div class="capa-local">São João da Boa Vista, SP — Junho de 2026</div>
+</section>
+
+<!-- PÁGINA 1 -->
+<section class="pagina quebra">
+  <div class="topo">MF Tecnologia — Diagnóstico de Rede | UNIFEOB 2026</div>
+
+  <h2 class="sec">1. Identificação do Projeto</h2>
+  <table class="info">
+    <tr><td>Título</td><td>Diagnóstico e Melhoria da Rede Corporativa</td></tr>
+    <tr><td>Empresa</td><td>MF Tecnologia e Sistemas</td></tr>
+    <tr><td>Período</td><td>Maio – Junho de 2026</td></tr>
+    <tr><td>Aluno / RA</td><td>Matheus Francisco — RA 24001882</td></tr>
+    <tr><td>Orientadora</td><td>Prof.ª Mariangela Martimbianco Santos</td></tr>
+    <tr><td>Algoritmo central</td><td>Dijkstra (caminho de menor latência) sobre grafo ponderado</td></tr>
+    <tr><td>Ferramentas</td><td>Python 3 · Cisco Packet Tracer · Relatório HTML com servidor local</td></tr>
+    <tr><td>Repositório</td><td>https://github.com/mathfrancisco/Projeto-Integrado-Redes-de-Computadores-e-Algoritmos</td></tr>
+    <tr><td>ODS Relacionado</td><td>ODS 9 — Indústria, Inovação e Infraestrutura (Agenda 2030/ONU)</td></tr>
+  </table>
+
+  <h2 class="sec">2. Introdução e Objetivos</h2>
+  <p>A <strong>MF Tecnologia e Sistemas</strong> opera com uma rede corporativa única e plana, na qual
+  computadores administrativos, estações de desenvolvimento, servidores, dispositivos IoT e visitantes
+  compartilham o mesmo domínio de broadcast. Essa ausência de segmentação cria riscos de segurança,
+  gargalos de tráfego e pontos únicos de falha — um problema silencioso que só se manifesta sob carga
+  ou incidente.</p>
+  <p>Este projeto modela a rede como um <strong>grafo ponderado</strong> (dispositivos = nós, conexões =
+  arestas, latência = peso) e aplica o <strong>algoritmo de Dijkstra</strong> para encontrar caminhos de
+  menor latência, identificar gargalos e validar uma arquitetura nova, segmentada por VLANs, com firewall
+  e redundância de link. A conexão com o <strong>ODS 9</strong> é direta: infraestrutura segura, segmentada
+  e resiliente sustenta inovação e continuidade do negócio.</p>
+
+  <h3 class="sub">Objetivos Específicos</h3>
+  <ul class="especificos">
+    <li>Inventariar dispositivos e medir latência/perda de pacotes (ping, traceroute).</li>
+    <li>Representar a topologia atual e a proposta como grafos em JSON validados.</li>
+    <li>Executar Dijkstra para comparar o custo DEV1 → CLOUD nas duas redes.</li>
+    <li>Identificar nós com maior concentração de rotas (pontos críticos de falha).</li>
+    <li>Projetar VLANs, regras de acesso e firewall, validando por matriz de testes.</li>
+  </ul>
+
+  <h2 class="sec">3. Arquitetura de Rede</h2>
+  <p>A rede atual concentra todo o tráfego em um único switch (<code>SW1</code>) e um único roteador de
+  borda (<code>R1</code>) com link de internet único — qualquer falha nesses nós derruba toda a operação.
+  A proposta introduz um switch core com VLANs, um firewall-roteador e dois links de operadora (ISP1/ISP2)
+  para redundância.</p>
+
+  <h3 class="sub">Topologia atual (cenário simulado)</h3>
+  <table class="dados">
+    <thead><tr><th>Dispositivo</th><th>Tipo</th><th>Setor</th><th>Conexão (latência)</th></tr></thead>
+    <tbody>
+      <tr><td>DEV1</td><td>Computador</td><td>Desenvolvimento</td><td>→ SW1 (1,0 ms, Ethernet)</td></tr>
+      <tr><td>ADM1</td><td>Computador</td><td>Administração</td><td>→ SW1 (1,2 ms, Ethernet)</td></tr>
+      <tr><td>SRV1</td><td>Servidor</td><td>Servidores</td><td>→ SW1 (0,8 ms, Ethernet)</td></tr>
+      <tr><td>IOT1</td><td>IoT</td><td>IoT</td><td>→ AP1 (5,5 ms, Wi-Fi)</td></tr>
+      <tr><td>GUEST1</td><td>Computador</td><td>Visitantes</td><td>→ AP1 (7,0 ms, Wi-Fi)</td></tr>
+      <tr><td>AP1</td><td>Access Point</td><td>—</td><td>→ SW1 (1,5 ms, Ethernet)</td></tr>
+      <tr><td>SW1</td><td>Switch</td><td>—</td><td>→ R1 (2,0 ms, Ethernet)</td></tr>
+      <tr><td>R1</td><td>Roteador de borda</td><td>—</td><td>→ INTERNET (12,0 ms, WAN)</td></tr>
+      <tr><td>INTERNET / CLOUD</td><td>WAN / Nuvem</td><td>—</td><td>INTERNET → CLOUD (18,0 ms, WAN)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Topologia proposta (segmentada)</h3>
+  <table class="dados">
+    <thead><tr><th>Dispositivo</th><th>Tipo</th><th>VLAN</th><th>Conexão (latência)</th></tr></thead>
+    <tbody>
+      <tr><td>DEV1</td><td>Computador</td><td>20</td><td>→ SW_CORE (0,6 ms)</td></tr>
+      <tr><td>ADM1</td><td>Computador</td><td>10</td><td>→ SW_CORE (0,7 ms)</td></tr>
+      <tr><td>SRV1</td><td>Servidor</td><td>30</td><td>→ SW_CORE (0,4 ms)</td></tr>
+      <tr><td>IOT1</td><td>IoT</td><td>40</td><td>→ AP_IOT (2,0 ms) → SW_CORE (0,8 ms)</td></tr>
+      <tr><td>GUEST1</td><td>Computador</td><td>50</td><td>→ AP_GUEST (3,0 ms) → SW_CORE (0,9 ms)</td></tr>
+      <tr><td>SW_CORE</td><td>Switch core</td><td>Trunk</td><td>→ FW (0,8 ms, Trunk)</td></tr>
+      <tr><td>FW</td><td>Firewall-roteador</td><td>—</td><td>→ ISP1 (8,0 ms) · → ISP2 (12,0 ms)</td></tr>
+      <tr><td>ISP1 / ISP2</td><td>Links WAN</td><td>—</td><td>→ CLOUD (18,0 / 20,0 ms)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PÁGINA 2 -->
+<section class="pagina quebra">
+  <div class="topo">MF Tecnologia — Diagnóstico de Rede | UNIFEOB 2026</div>
+
+  <h2 class="sec">4. Modelagem em Grafo e Pensamento Computacional</h2>
+  <p>A rede é carregada de um arquivo JSON para a classe <code>Grafo</code> (lista de adjacência ponderada).
+  O algoritmo de <strong>Dijkstra</strong> usa uma fila de prioridade (<code>heapq</code>) para calcular as
+  menores distâncias a partir de uma origem; <code>reconstruir_caminho()</code> rastreia os predecessores
+  até montar a rota. Pesos negativos são rejeitados na validação, pois Dijkstra exige arestas não negativas.</p>
+
+  <h3 class="sub">Pilares do Pensamento Computacional</h3>
+  <table class="dados">
+    <thead><tr><th>Pilar</th><th>Aplicação no Projeto</th></tr></thead>
+    <tbody>
+      <tr><td>Decomposição</td><td>Solução dividida em módulos: <code>grafo.py</code> (estrutura), <code>dijkstra.py</code> (algoritmo), <code>analise.py</code> (comparação/gargalos), <code>main.py</code> (CLI).</td></tr>
+      <tr><td>Abstração</td><td><code>Grafo.de_json()</code> esconde parsing e validação; <code>menor_caminho()</code> devolve um <code>ResultadoCaminho</code> sem expor a fila de prioridade.</td></tr>
+      <tr><td>Padrões</td><td><code>concentracao_de_rotas()</code> identifica nós usados por mais caminhos mínimos — revela pontos únicos de falha (ex.: SW1, R1).</td></tr>
+      <tr><td>Algoritmo</td><td>Dijkstra com <code>heapq</code> — complexidade O((V+E) log V); descarta entradas obsoletas da fila comparando a distância acumulada.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Tabela de decisão do caminho (DEV1 → CLOUD)</h3>
+  <table class="dados">
+    <thead><tr><th>Topologia</th><th>Caminho de menor latência</th><th>Custo total</th></tr></thead>
+    <tbody>
+      <tr><td>Atual</td><td>DEV1 → SW1 → R1 → INTERNET → CLOUD</td><td>33,00 ms</td></tr>
+      <tr><td>Proposta</td><td>DEV1 → SW_CORE → FW → ISP1 → CLOUD</td><td>27,40 ms</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="sec">5. Protocolos, Segmentação e Conectividade</h2>
+  <p>A nova arquitetura separa a rede em VLANs por finalidade. Cada setor recebe uma faixa de IP própria
+  e regras de acesso específicas no firewall, reduzindo a superfície de ataque e o domínio de broadcast.
+  A medição de conectividade usa <strong>ICMP</strong> (ping/traceroute) e os caminhos lógicos são validados
+  pelo Dijkstra.</p>
+
+  <table class="dados">
+    <thead><tr><th>VLAN</th><th>Setor</th><th>Rede</th><th>Gateway</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td>Administração</td><td class="mono">192.168.10.0/24</td><td class="mono">192.168.10.1</td></tr>
+      <tr><td>20</td><td>Desenvolvimento</td><td class="mono">192.168.20.0/24</td><td class="mono">192.168.20.1</td></tr>
+      <tr><td>30</td><td>Servidores</td><td class="mono">192.168.30.0/24</td><td class="mono">192.168.30.1</td></tr>
+      <tr><td>40</td><td>IoT</td><td class="mono">192.168.40.0/24</td><td class="mono">192.168.40.1</td></tr>
+      <tr><td>50</td><td>Visitantes</td><td class="mono">192.168.50.0/24</td><td class="mono">192.168.50.1</td></tr>
+      <tr><td>99</td><td>Gerenciamento</td><td class="mono">192.168.99.0/24</td><td class="mono">192.168.99.1</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Matriz de testes de acesso</h3>
+  <table class="dados">
+    <thead><tr><th>ID</th><th>Origem</th><th>Destino</th><th>Esperado</th></tr></thead>
+    <tbody>
+      <tr><td>T01</td><td>PC_ADMIN</td><td>SRV_APP</td><td><span class="tag perm">Permitido</span></td></tr>
+      <tr><td>T02</td><td>PC_DEV</td><td>SRV_APP</td><td><span class="tag perm">Permitido</span></td></tr>
+      <tr><td>T03</td><td>PC_DEV</td><td>PC_ADMIN</td><td><span class="tag bloq">Bloqueado</span></td></tr>
+      <tr><td>T04</td><td>IOT1</td><td>SRV_MQTT</td><td><span class="tag perm">Permitido</span></td></tr>
+      <tr><td>T05</td><td>IOT1</td><td>PC_ADMIN</td><td><span class="tag bloq">Bloqueado</span></td></tr>
+      <tr><td>T06</td><td>PC_GUEST</td><td>SRV_APP</td><td><span class="tag bloq">Bloqueado</span></td></tr>
+      <tr><td>T07</td><td>PC_GUEST</td><td>CLOUD_SERVER</td><td><span class="tag perm">Permitido</span></td></tr>
+      <tr><td>T08</td><td>PC_DEV</td><td>CLOUD_SERVER</td><td><span class="tag perm">Permitido</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PÁGINA 3 -->
+<section class="pagina quebra">
+  <div class="topo">MF Tecnologia — Diagnóstico de Rede | UNIFEOB 2026</div>
+
+  <h2 class="sec">6. Implementação e Código-Fonte</h2>
+  <p>Repositório GitHub:
+  <a href="https://github.com/mathfrancisco/Projeto-Integrado-Redes-de-Computadores-e-Algoritmos">github.com/mathfrancisco/Projeto-Integrado-Redes-de-Computadores-e-Algoritmos</a></p>
+
+  <h3 class="sub">Estrutura de Módulos</h3>
+  <table class="dados">
+    <thead><tr><th>Arquivo</th><th>Responsabilidade</th></tr></thead>
+    <tbody>
+      <tr><td>src/grafo.py</td><td>Classe <code>Grafo</code> (lista de adjacência), validação de nós/arestas e carga via <code>de_json()</code>.</td></tr>
+      <tr><td>src/dijkstra.py</td><td>Algoritmo de Dijkstra com <code>heapq</code>, <code>reconstruir_caminho()</code> e <code>menor_caminho()</code>.</td></tr>
+      <tr><td>src/analise.py</td><td><code>comparar_topologias()</code> e <code>concentracao_de_rotas()</code> (gargalos).</td></tr>
+      <tr><td>main.py</td><td>CLI com subcomandos <code>caminho</code>, <code>gargalos</code> e <code>comparar</code>.</td></tr>
+      <tr><td>scripts/servidor_testes.py</td><td>Servidor local Python que expõe a API e serve o relatório HTML interativo.</td></tr>
+      <tr><td>tests/test_dijkstra.py</td><td>Testes automatizados do algoritmo e da comparação de topologias.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Exemplo de execução (CLI)</h3>
+  <pre class="code">python main.py comparar --atual data/topologia_atual.json \
+  --proposta data/topologia_proposta.json --origem DEV1 --destino CLOUD
+
+TOPOLOGIA ATUAL
+Caminho: DEV1 -> SW1 -> R1 -> INTERNET -> CLOUD
+Custo: 33.00 ms
+
+TOPOLOGIA PROPOSTA
+Caminho: DEV1 -> SW_CORE -> FW -> ISP1 -> CLOUD
+Custo: 27.40 ms
+
+Diferença: 5.60 ms
+Melhoria estimada: 16.97%</pre>
+
+  <h3 class="sub">Formato da topologia (JSON)</h3>
+  <pre class="code">{"nome":"...", "nos":[{"id":"DEV1","tipo":"computador","vlan":20}],
+ "arestas":[{"origem":"DEV1","destino":"SW_CORE","latencia_ms":0.6,"meio":"Ethernet"}]}</pre>
+
+  <h2 class="sec">7. Resultados, Segurança e Conclusão</h2>
+  <h3 class="sub">Validação Funcional</h3>
+  <table class="dados">
+    <thead><tr><th>Cenário</th><th>Resultado</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Dijkstra DEV1 → CLOUD (atual)</td><td>33,00 ms — rota via SW1/R1 (link único)</td><td class="status-ok">OK</td></tr>
+      <tr><td>Dijkstra DEV1 → CLOUD (proposta)</td><td>27,40 ms — rota via SW_CORE/FW/ISP1</td><td class="status-ok">OK</td></tr>
+      <tr><td>Melhoria de latência</td><td>5,60 ms mais rápido — 16,97% de redução</td><td class="status-ok">OK</td></tr>
+      <tr><td>Concentração de rotas (atual)</td><td>SW1 e R1 concentram a maioria dos caminhos = pontos únicos de falha</td><td class="status-ok">OK</td></tr>
+      <tr><td>Redundância de link (proposta)</td><td>Falha de ISP1 → reroteamento por ISP2 mantém CLOUD acessível</td><td class="status-ok">OK</td></tr>
+      <tr><td>Segmentação por VLAN</td><td>Matriz de testes valida acessos permitidos e bloqueados</td><td class="status-ok">OK</td></tr>
+      <tr><td>Peso negativo na topologia</td><td>Rejeitado por <code>ErroTopologia</code> (Dijkstra exige pesos ≥ 0)</td><td class="status-ok">OK</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="sub">Segurança e Escalabilidade</h3>
+  <p>A rede atual, plana e sem firewall, permite tráfego lateral livre entre setores e depende de um único
+  switch, roteador e link. A proposta isola setores em VLANs, aplica regras de acesso no firewall e adiciona
+  um segundo link de operadora (ISP2) para redundância. A arquitetura escala adicionando novas VLANs/switches
+  ao grafo sem alterar o algoritmo — basta atualizar o JSON da topologia.</p>
+
+  <h3 class="sub">Conclusão</h3>
+  <p>O projeto cumpriu os requisitos do Projeto Integrado de <strong>Redes de Computadores e Algoritmos</strong>:
+  modelagem da rede como grafo ponderado, aplicação do algoritmo de Dijkstra, identificação de gargalos e
+  pontos únicos de falha, e validação de uma arquitetura segmentada e redundante. A proposta reduz a latência
+  do caminho crítico em <strong>16,97%</strong>, elimina pontos únicos de falha e organiza a rede em VLANs —
+  diretamente alinhada ao <strong>ODS 9 — Indústria, Inovação e Infraestrutura</strong>, com replicação
+  imediata para outras unidades da MF Tecnologia e Sistemas.</p>
+
+  <h2 class="sec">8. Referências</h2>
+  <p style="font-size:10pt">
+  CORMEN, T. H. et al. <em>Algoritmos: Teoria e Prática</em>. 4. ed. Rio de Janeiro: GEN LTC, 2022.<br>
+  DIJKSTRA, E. W. A note on two problems in connexion with graphs. <em>Numerische Mathematik</em>, v. 1, 1959.<br>
+  TANENBAUM, A. S.; WETHERALL, D. J. <em>Redes de Computadores</em>. 6. ed. São Paulo: Pearson, 2021.<br>
+  IETF. RFC 792 — Internet Control Message Protocol (ICMP). 1981.<br>
+  CISCO SYSTEMS. <em>Packet Tracer — Documentação e Laboratórios</em>. Disponível em: https://www.netacad.com<br>
+  ONU. <em>Objetivos de Desenvolvimento Sustentável — ODS 9</em>. Agenda 2030. Disponível em: https://brasil.un.org/pt-br/sdgs/9
+  </p>
+</section>
+
+</body>
+</html>

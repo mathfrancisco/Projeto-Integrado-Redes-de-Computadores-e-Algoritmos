@@ -1,0 +1,4 @@
+data_hora;nome;host;origem;destino;pacotes_enviados;pacotes_recebidos;perda_percentual;latencia_min_ms;latencia_media_ms;latencia_max_ms;status
+2026-06-15T22:50:43;gateway;192.168.0.1;DEV1;R1;;;;;;;REVISAR
+2026-06-15T22:51:08;dns-publico;8.8.8.8;DEV1;INTERNET;;;;;;;REVISAR
+2026-06-15T22:54:21;dns-publico;8.8.8.8;DEV1;INTERNET;;;;;;;REVISAR
