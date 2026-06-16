@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant DEV as VLAN 20 - DEV
+    participant FW as Firewall/Roteador
+    participant SRV as VLAN 30 - Servidor
+    participant IOT as VLAN 40 - IoT
+    participant MQTT as Broker MQTT
+    participant GUEST as VLAN 50 - Visitante
+    participant NET as Internet
+
+    DEV->>FW: Solicita acesso ao servidor
+    FW->>SRV: Permite serviço autorizado
+    SRV-->>DEV: Resposta
+
+    IOT->>FW: Publica dados MQTT
+    FW->>MQTT: Permite porta autorizada
+    MQTT-->>IOT: Confirmação
+
+    GUEST->>FW: Tenta acessar rede interna
+    FW-->>GUEST: Acesso bloqueado
+
+    GUEST->>FW: Solicita acesso à internet
+    FW->>NET: Acesso permitido
+    NET-->>GUEST: Resposta

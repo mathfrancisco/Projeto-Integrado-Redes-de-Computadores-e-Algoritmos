@@ -1,0 +1,10 @@
+flowchart LR
+    DEV1[Notebook DEV] --- SW1[Switch principal]
+    ADM1[Notebook ADMIN] --- SW1
+    SRV1[Servidor] --- SW1
+    IOT1[Dispositivo IoT] --- AP1[Wi-Fi compartilhado]
+    GUEST1[Visitante] --- AP1
+    AP1 --- SW1
+    SW1 --- R1[Roteador]
+    R1 --- INTERNET((Internet))
+    INTERNET --- CLOUD[Serviço em nuvem]

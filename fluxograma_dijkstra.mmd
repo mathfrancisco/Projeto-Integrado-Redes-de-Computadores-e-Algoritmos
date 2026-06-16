@@ -1,0 +1,21 @@
+flowchart TD
+    A([Início]) --> B[Carregar grafo]
+    B --> C[Definir distâncias como infinito]
+    C --> D[Distância da origem = 0]
+    D --> E[Inserir origem na fila]
+    E --> F{Fila vazia?}
+    F -- Sim --> M{Destino alcançável?}
+    F -- Não --> G[Retirar nó de menor distância]
+    G --> H[Verificar vizinhos]
+    H --> I[Calcular nova distância]
+    I --> J{Nova distância é menor?}
+    J -- Sim --> K[Atualizar distância e predecessor]
+    J -- Não --> L{Há outro vizinho?}
+    K --> L
+    L -- Sim --> H
+    L -- Não --> F
+    M -- Não --> N[Informar destino inalcançável]
+    M -- Sim --> O[Reconstruir caminho]
+    O --> P[Exibir caminho e custo]
+    N --> Q([Fim])
+    P --> Q

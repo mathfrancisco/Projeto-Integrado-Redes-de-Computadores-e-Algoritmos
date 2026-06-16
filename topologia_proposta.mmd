@@ -1,0 +1,13 @@
+flowchart LR
+    ADM1[ADMIN<br/>VLAN 10] --- SW[Switch gerenciável]
+    DEV1[DEV<br/>VLAN 20] --- SW
+    SRV1[SERVERS<br/>VLAN 30] --- SW
+    IOT1[IOT<br/>VLAN 40] --- APIOT[AP IoT]
+    APIOT --- SW
+    GUEST1[GUESTS<br/>VLAN 50] --- APG[AP Visitantes]
+    APG --- SW
+    SW --- FW[Firewall / Roteador]
+    FW --- ISP1[Link principal]
+    FW --- ISP2[Link alternativo]
+    ISP1 --- CLOUD[Serviços em nuvem]
+    ISP2 --- CLOUD
