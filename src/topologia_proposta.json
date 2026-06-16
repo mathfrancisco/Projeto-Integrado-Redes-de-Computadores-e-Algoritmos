@@ -1,0 +1,135 @@
+{
+  "nome": "Topologia proposta - cenário simulado",
+  "observacao": "Substituir os valores pelas medições reais ou resultados da simulação.",
+  "nos": [
+    {
+      "id": "DEV1",
+      "tipo": "computador",
+      "vlan": 20
+    },
+    {
+      "id": "ADM1",
+      "tipo": "computador",
+      "vlan": 10
+    },
+    {
+      "id": "SRV1",
+      "tipo": "servidor",
+      "vlan": 30
+    },
+    {
+      "id": "IOT1",
+      "tipo": "iot",
+      "vlan": 40
+    },
+    {
+      "id": "GUEST1",
+      "tipo": "computador",
+      "vlan": 50
+    },
+    {
+      "id": "AP_IOT",
+      "tipo": "access-point",
+      "vlan": 40
+    },
+    {
+      "id": "AP_GUEST",
+      "tipo": "access-point",
+      "vlan": 50
+    },
+    {
+      "id": "SW_CORE",
+      "tipo": "switch"
+    },
+    {
+      "id": "FW",
+      "tipo": "firewall-roteador"
+    },
+    {
+      "id": "ISP1",
+      "tipo": "link-principal"
+    },
+    {
+      "id": "ISP2",
+      "tipo": "link-alternativo"
+    },
+    {
+      "id": "CLOUD",
+      "tipo": "nuvem"
+    }
+  ],
+  "arestas": [
+    {
+      "origem": "DEV1",
+      "destino": "SW_CORE",
+      "latencia_ms": 0.6,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "ADM1",
+      "destino": "SW_CORE",
+      "latencia_ms": 0.7,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "SRV1",
+      "destino": "SW_CORE",
+      "latencia_ms": 0.4,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "IOT1",
+      "destino": "AP_IOT",
+      "latencia_ms": 2.0,
+      "meio": "Wi-Fi"
+    },
+    {
+      "origem": "AP_IOT",
+      "destino": "SW_CORE",
+      "latencia_ms": 0.8,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "GUEST1",
+      "destino": "AP_GUEST",
+      "latencia_ms": 3.0,
+      "meio": "Wi-Fi"
+    },
+    {
+      "origem": "AP_GUEST",
+      "destino": "SW_CORE",
+      "latencia_ms": 0.9,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "SW_CORE",
+      "destino": "FW",
+      "latencia_ms": 0.8,
+      "meio": "Trunk"
+    },
+    {
+      "origem": "FW",
+      "destino": "ISP1",
+      "latencia_ms": 8.0,
+      "meio": "WAN"
+    },
+    {
+      "origem": "FW",
+      "destino": "ISP2",
+      "latencia_ms": 12.0,
+      "meio": "WAN"
+    },
+    {
+      "origem": "ISP1",
+      "destino": "CLOUD",
+      "latencia_ms": 18.0,
+      "meio": "WAN"
+    },
+    {
+      "origem": "ISP2",
+      "destino": "CLOUD",
+      "latencia_ms": 20.0,
+      "meio": "WAN"
+    }
+  ]
+}

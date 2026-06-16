@@ -1,0 +1,1 @@
+data_hora;nome;host;origem;destino;pacotes_enviados;pacotes_recebidos;perda_percentual;latencia_min_ms;latencia_media_ms;latencia_max_ms;status

@@ -1,0 +1,107 @@
+{
+  "nome": "Topologia atual - cenário simulado",
+  "observacao": "Substituir os valores pelas medições reais da empresa.",
+  "nos": [
+    {
+      "id": "DEV1",
+      "tipo": "computador",
+      "setor": "desenvolvimento"
+    },
+    {
+      "id": "ADM1",
+      "tipo": "computador",
+      "setor": "administracao"
+    },
+    {
+      "id": "SRV1",
+      "tipo": "servidor",
+      "setor": "servidores"
+    },
+    {
+      "id": "IOT1",
+      "tipo": "iot",
+      "setor": "iot"
+    },
+    {
+      "id": "GUEST1",
+      "tipo": "computador",
+      "setor": "visitantes"
+    },
+    {
+      "id": "AP1",
+      "tipo": "access-point"
+    },
+    {
+      "id": "SW1",
+      "tipo": "switch"
+    },
+    {
+      "id": "R1",
+      "tipo": "roteador"
+    },
+    {
+      "id": "INTERNET",
+      "tipo": "internet"
+    },
+    {
+      "id": "CLOUD",
+      "tipo": "nuvem"
+    }
+  ],
+  "arestas": [
+    {
+      "origem": "DEV1",
+      "destino": "SW1",
+      "latencia_ms": 1.0,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "ADM1",
+      "destino": "SW1",
+      "latencia_ms": 1.2,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "SRV1",
+      "destino": "SW1",
+      "latencia_ms": 0.8,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "IOT1",
+      "destino": "AP1",
+      "latencia_ms": 5.5,
+      "meio": "Wi-Fi"
+    },
+    {
+      "origem": "GUEST1",
+      "destino": "AP1",
+      "latencia_ms": 7.0,
+      "meio": "Wi-Fi"
+    },
+    {
+      "origem": "AP1",
+      "destino": "SW1",
+      "latencia_ms": 1.5,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "SW1",
+      "destino": "R1",
+      "latencia_ms": 2.0,
+      "meio": "Ethernet"
+    },
+    {
+      "origem": "R1",
+      "destino": "INTERNET",
+      "latencia_ms": 12.0,
+      "meio": "WAN"
+    },
+    {
+      "origem": "INTERNET",
+      "destino": "CLOUD",
+      "latencia_ms": 18.0,
+      "meio": "WAN"
+    }
+  ]
+}
